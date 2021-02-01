@@ -26,7 +26,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 #define CUDAIMAGEUTILITIES_GENERATEIRRADIANCEMAP_H_
 
 namespace CUDAImageUtilities {
-void GenerateIrradianceMap(float *InFloatRGBA, float *OutFloatRGBA, const int Width, const int Height, const int SampleNum);
+void GenerateIrradianceMap(float *InFloatRGBA, float *OutFloatRGBA, const int InWidth, const int InHeight, const int OutWidth, const int OutHeight, const int SampleNum);
 }
 
 #endif // CUDAIMAGEUTILITIES_GENERATEIRRADIANCEMAP_H_

@@ -41,11 +41,11 @@ __device__ float2 Hammersley(unsigned int i, unsigned int n)
     return make_float2(float(i) / float(n), float(__brev(i)) * 2.328306465386963e-10);
 }
 
-__global__ void ComputeIrradiance(float *Out, int Width, int Height, int SampleNum)
+__global__ void ComputeIrradiance(float *Out, int InWidth, int InHeight, int OutWidth, int OutHeight, int SampleNum)
 {
     unsigned int texx = blockIdx.x * blockDim.x + threadIdx.x;
     unsigned int texy = blockIdx.y * blockDim.y + threadIdx.y;
-    float2 normaluv = make_float2(((float)texx + 0.5f) / (float)Width, ((float)texy + 0.5f) / (float)Height);
+    float2 normaluv = make_float2(((float)texx + 0.5f) / (float)OutWidth, ((float)texy + 0.5f) / (float)OutHeight);
 
     float4 totallight = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
     for (int sampleidx = 0; sampleidx < SampleNum; sampleidx++) {
@@ -62,26 +62,27 @@ __global__ void ComputeIrradiance(float *Out, int Width, int Height, int SampleN
         }
         float2 randomuv = make_float2(randomdirection.x / (2.0f * PI), -cos(randomdirection.y) * 0.5f + 0.5f);
 
-        float4 lightcolor = tex2D(srctex, randomuv.x * (float)Width, randomuv.y * (float)Height);
+        float4 lightcolor = tex2D(srctex, randomuv.x * (float)InWidth, randomuv.y * (float)InHeight);
 
         float lightpower = (1.0f - hammersleylonglat.y) * 2.0f;
         totallight = make_float4(totallight.x + lightcolor.x * lightpower, totallight.y + lightcolor.y * lightpower, totallight.z + lightcolor.z * lightpower, 1.0f);
     }
 
-    Out[(texx + texy * Width) * 4 + 0] = totallight.x / SampleNum;
-    Out[(texx + texy * Width) * 4 + 1] = totallight.y / SampleNum;
-    Out[(texx + texy * Width) * 4 + 2] = totallight.z / SampleNum;
-    Out[(texx + texy * Width) * 4 + 3] = 1.0f;
+    Out[(texx + texy * OutWidth) * 4 + 0] = totallight.x / SampleNum;
+    Out[(texx + texy * OutWidth) * 4 + 1] = totallight.y / SampleNum;
+    Out[(texx + texy * OutWidth) * 4 + 2] = totallight.z / SampleNum;
+    Out[(texx + texy * OutWidth) * 4 + 3] = 1.0f;
 }
 
-void GenerateIrradianceMap(float *InFloatRGBA, float *OutFloatRGBA, const int Width, const int Height, const int SampleNum)
+void GenerateIrradianceMap(float *InFloatRGBA, float *OutFloatRGBA, const int InWidth, const int InHeight, const int OutWidth, const int OutHeight, const int SampleNum)
 {
-    size_t datasize = Width * Height * sizeof(float) * 4;
+    size_t datasize_in  = InWidth * InHeight * sizeof(float) * 4;
+    size_t datasize_out = OutWidth * OutHeight * sizeof(float) * 4;
 
     cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc(32, 32, 32, 32, cudaChannelFormatKindFloat);
     cudaArray* cuArray;
-    cudaMallocArray(&cuArray, &channelDesc, Width, Height);
-    cudaMemcpyToArray(cuArray, 0, 0, InFloatRGBA, datasize, cudaMemcpyHostToDevice);
+    cudaMallocArray(&cuArray, &channelDesc, InWidth, InHeight);
+    cudaMemcpyToArray(cuArray, 0, 0, InFloatRGBA, datasize_in, cudaMemcpyHostToDevice);
 
     srctex.addressMode[0] = cudaAddressModeWrap;
     srctex.addressMode[1] = cudaAddressModeWrap;
@@ -91,13 +92,13 @@ void GenerateIrradianceMap(float *InFloatRGBA, float *OutFloatRGBA, const int Wi
     cudaBindTextureToArray(srctex, cuArray, channelDesc);
 
     float* dOut;
-    cudaMalloc(&dOut, datasize);
+    cudaMalloc(&dOut, datasize_out);
 
     dim3 threadsperblock(16, 16);
-    dim3 numblocks(Width / threadsperblock.x, Height / threadsperblock.y);
-    ComputeIrradiance<<<numblocks, threadsperblock>>>(dOut, Width, Height, SampleNum);
+    dim3 numblocks(OutWidth / threadsperblock.x, OutHeight / threadsperblock.y);
+    ComputeIrradiance<<<numblocks, threadsperblock>>>(dOut, InWidth, InHeight, OutWidth, OutHeight, SampleNum);
 
-    cudaMemcpy(OutFloatRGBA, dOut, datasize, cudaMemcpyDeviceToHost);
+    cudaMemcpy(OutFloatRGBA, dOut, datasize_out, cudaMemcpyDeviceToHost);
 
     cudaFree(dOut);
 }

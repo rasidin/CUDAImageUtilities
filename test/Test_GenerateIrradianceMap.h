@@ -34,7 +34,7 @@ bool Test_GenerateIrradianceMap()
 {
     float* OutputData = (float*)::malloc(sizeof(TestImageData));
 
-    CUDAImageUtilities::GenerateIrradianceMap(TestImage::Data, OutputData, TestImage::Width, TestImage::Height, 1024);
+    CUDAImageUtilities::GenerateIrradianceMap(TestImage::Data, OutputData, TestImage::Width, TestImage::Height, 32, 16, 1024);
 
     free(OutputData);
     return true;
