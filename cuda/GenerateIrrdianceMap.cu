@@ -51,14 +51,20 @@ __global__ void ComputeIrradiance(float *Out, int InWidth, int InHeight, int Out
     for (int sampleidx = 0; sampleidx < SampleNum; sampleidx++) {
         float2 hammersleylonglat = Hammersley(sampleidx, SampleNum);
         float2 normalphiandtheta = make_float2(normaluv.x * 2.0f * PI, acos(1.0f - 2.0f * normaluv.y));
-        float2 randomdirection = make_float2(normalphiandtheta.x + hammersleylonglat.x * 2.0f * PI, normalphiandtheta.y + (-0.5f + hammersleylonglat.y) * PI);
+        float2 randomdirection = make_float2(normalphiandtheta.x + hammersleylonglat.x * 2.0f * PI, normalphiandtheta.y + (0.5f * hammersleylonglat.y) * PI);
         if (randomdirection.y < 0.0f) {
             randomdirection.y = abs(randomdirection.y);
             randomdirection.x += PI;
         }
         else if (randomdirection.y > PI) {
-            randomdirection.y = PI - randomdirection.y;
+            randomdirection.y = 2.0f * PI - randomdirection.y;
             randomdirection.x += PI;
+        }
+        if (randomdirection.x > 2.0f * PI) {
+            randomdirection.x -= 2.0f * PI;
+        }
+        else if (randomdirection.x < 0.0f) {
+            randomdirection.x += 2.0f * PI;
         }
         float2 randomuv = make_float2(randomdirection.x / (2.0f * PI), -cos(randomdirection.y) * 0.5f + 0.5f);
 
