@@ -25,7 +25,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include "GenerateIrradianceMap.h"
 #include "cuda_runtime.h"
 
-#define PI 3.141592654f
+#include "CudaDeviceUtils.cuh"
 
 namespace CUDAImageUtilities {
 texture<float4, cudaTextureType2D, cudaReadModeElementType> srctex;
@@ -34,11 +34,6 @@ __device__ float3 UVtoDirection(float2 uv)
 {
     float2 longlat = make_float2((2.0f * uv.x - 1.0f) * PI, (0.5f - uv.y) * PI);
     return make_float3(cos(longlat.y) * sin(longlat.x), sin(longlat.y) * sin(longlat.x), cos(longlat.y));
-}
-
-__device__ float2 Hammersley(unsigned int i, unsigned int n)
-{
-    return make_float2(float(i) / float(n), float(__brev(i)) * 2.328306465386963e-10);
 }
 
 __global__ void ComputeIrradiance(float *Out, int InWidth, int InHeight, int OutWidth, int OutHeight, int SampleNum)
