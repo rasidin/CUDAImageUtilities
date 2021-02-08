@@ -85,7 +85,7 @@ __global__ void ComputeEnvironmentBRDFLUT(float* Out, int Width, int Height, int
     unsigned int texx = blockIdx.x * blockDim.x + threadIdx.x;
     unsigned int texy = blockIdx.y * blockDim.y + threadIdx.y;
 
-    float nov = (float)texx / (float)Width;
+    float nov = max((float)texx / (float)Width, 0.0001f);
     float roughness = (float)texy / (float)Height;
     float2 AB = IntergrateBRDF(roughness, nov, SampleNum);
 
