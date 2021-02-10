@@ -28,6 +28,19 @@ OTHER DEALINGS IN THE SOFTWARE.
 #define PI 3.141592654f
 
 namespace CUDAImageUtilities {
+inline __device__ float3 UVtoDirection(float2 uv)
+{
+    float2 longlat = make_float2((2.0f * uv.x - 1.0f) * PI, (0.5f - uv.y) * PI);
+    return make_float3(cos(longlat.y) * sin(longlat.x), sin(longlat.y) * sin(longlat.x), cos(longlat.y));
+}
+inline __device__ float2 DirectionToLongLat(float3 dir)
+{
+    return make_float2(atan2f(dir.x, dir.z), acos(dir.y));
+}
+inline __device__ float dot(float3 a, float3 b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
 inline __device__ float3 cross(float3 a, float3 b)
 {
     return make_float3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);

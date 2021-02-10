@@ -30,12 +30,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 namespace CUDAImageUtilities {
 texture<float4, cudaTextureType2D, cudaReadModeElementType> srctex;
 
-__device__ float3 UVtoDirection(float2 uv)
-{
-    float2 longlat = make_float2((2.0f * uv.x - 1.0f) * PI, (0.5f - uv.y) * PI);
-    return make_float3(cos(longlat.y) * sin(longlat.x), sin(longlat.y) * sin(longlat.x), cos(longlat.y));
-}
-
 __global__ void ComputeIrradiance(float *Out, int InWidth, int InHeight, int OutWidth, int OutHeight, int SampleNum)
 {
     unsigned int texx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -101,6 +95,7 @@ void GenerateIrradianceMap(float *InFloatRGBA, float *OutFloatRGBA, const int In
 
     cudaMemcpy(OutFloatRGBA, dOut, datasize_out, cudaMemcpyDeviceToHost);
 
+    cudaFreeArray(cuArray);
     cudaFree(dOut);
 }
 }

@@ -30,7 +30,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 /** Reference from 'Real Shading in Unreal Engine 4 by Brian Karis' */
 namespace CUDAImageUtilities {
 /** Reference from 'Real Shading in Unreal Engine 4 by Brian Karis' */
-__device__ float3 ImportanceSampleGGX(float2 Xi, float Roughness, float3 Normal)
+__device__ float3 EBL_ImportanceSampleGGX(float2 Xi, float Roughness, float3 Normal)
 {
     float a = Roughness * Roughness;
 
@@ -59,7 +59,7 @@ __device__ float2 IntergrateBRDF(float Roughness, float NoV, int SampleNum)
     float b = 0.0f;
     for (unsigned int i = 0; i < SampleNum; i++) {
         float2 xi = Hammersley(i, SampleNum);
-        float3 h = ImportanceSampleGGX(xi, Roughness, make_float3(0.0f, 0.0f, 1.0f));
+        float3 h = EBL_ImportanceSampleGGX(xi, Roughness, make_float3(0.0f, 0.0f, 1.0f));
         float voh = v.x * h.x + v.y * h.y + v.z * h.z;
         float3 l = make_float3(2.0f * voh * h.x - v.x, 2.0f * voh * h.y - v.y, 2.0f * voh * h.z - v.z);
 
