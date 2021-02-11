@@ -42,7 +42,7 @@ __device__ float3 PRM_ImportanceSampleGGX(float2 Xi, float Roughness, float3 Nor
 
     float3 h = make_float3(sintheta * cos(phi), sintheta * sin(phi), costheta);
 
-    float3 up = abs(Normal.z) < 0.999f ? make_float3(0.0f, 0.0f, 1.0f) : make_float3(1.0f, 0.0f, 0.0f);
+    float3 up = abs(Normal.z) < 0.999f ? make_float3(0.0f, 0.0f, 1.0f) : make_float3(0.0f,-1.0f, 0.0f);
     float3 tanx = normalize(cross(up, Normal));
     float3 tany = cross(Normal, tanx);
 
@@ -69,11 +69,27 @@ __device__ float3 PrefilterEnvMap(float Roughness, float3 R, int Width, int Heig
         if (nol > 0.0f)
         {
             float2 longlat = DirectionToLongLat(l);
-            float4 envcolor = tex2D(srctex, longlat.x * (float)Width, longlat.y * (float)Height);
+            float2 longlatUV = make_float2(longlat.x / 2.0f / PI, longlat.y / PI);
+            if (longlatUV.y < 0.0f) {
+                longlatUV.y += 1.0f;
+                longlatUV.x += PI;
+            }
+            if (longlatUV.y > 1.0f) {
+                longlatUV.y -= 1.0f;
+                longlatUV.x += PI;
+            }
+            if (longlatUV.x < 0.0f)
+                longlatUV.x += 1.0f;
+            if (longlatUV.x > 1.0f)
+                longlatUV.x -= 1.0f;
+            float4 envcolor = tex2D(srctex, longlatUV.x * (float)Width, longlatUV.y * (float)Height);
             prefilteredcolor = make_float3(prefilteredcolor.x + envcolor.x * nol, prefilteredcolor.y + envcolor.y * nol, prefilteredcolor.z + envcolor.z * nol);
             totalweight = totalweight + nol;
         }
     }
+    if (totalweight == 0.0f)
+        return make_float3(1.0f, 0.0f, 0.0f);
+
     return make_float3(prefilteredcolor.x / totalweight, prefilteredcolor.y / totalweight, prefilteredcolor.z / totalweight);
 }
 
@@ -82,7 +98,6 @@ __global__ void ComputePrefilteredReflectionMap(float *Out, int InWidth, int InH
     unsigned int texx = blockIdx.x * blockDim.x + threadIdx.x;
     unsigned int texy = blockIdx.y * blockDim.y + threadIdx.y;
     float2 normaluv = make_float2(((float)texx + 0.5f) / (float)OutWidth, ((float)texy + 0.5f) / (float)OutHeight);
-
     float roughness = min(1.0f, powf(2, ROUGHNEST_MIP - log2f(OutWidth)));
 
     float3 prefilteredcolor = PrefilterEnvMap(roughness, UVtoDirection(normaluv), InWidth, InHeight, SampleNum);
@@ -117,6 +132,7 @@ void GeneratePrefilteredReflectionMap(float* InFloatRGBA, float* OutFloatRGBA, c
     cudaMalloc(&dOut, datasize_out);
 
     float* dOutMip = dOut;
+
     for (int mip = 0; mip < MipCount; mip++) {
         dim3 threadsperblock(16, 16);
         int mipwidth = OutWidth >> mip;
@@ -125,7 +141,7 @@ void GeneratePrefilteredReflectionMap(float* InFloatRGBA, float* OutFloatRGBA, c
         dim3 numblocks(mipwidth / threadsperblock.x, mipheight / threadsperblock.y);
         ComputePrefilteredReflectionMap<<<numblocks, threadsperblock>>>(dOutMip, InWidth, InHeight, mipwidth, mipheight, SampleNum);
 
-        dOutMip += mipwidth * mipheight * sizeof(float) * 4;
+        dOutMip += mipwidth * mipheight * 4;
     }
 
     cudaMemcpy(OutFloatRGBA, dOut, datasize_out, cudaMemcpyDeviceToHost);
