@@ -31,11 +31,29 @@ namespace CUDAImageUtilities {
 inline __device__ float3 UVtoDirection(float2 uv)
 {
     float2 longlat = make_float2(2.0f * uv.x * PI, uv.y * PI);
-    return make_float3(-sin(longlat.y) * cos(longlat.x), sin(longlat.y) * sin(longlat.x), cos(longlat.y));
+    return make_float3(-__sinf(longlat.y) * __cosf(longlat.x), __sinf(longlat.y) * __sinf(longlat.x), __cosf(longlat.y));
 }
 inline __device__ float2 DirectionToLongLat(float3 dir)
 {
     return make_float2(atan2f(dir.x, dir.y) + 0.5f * PI, acos(dir.z));
+}
+inline __device__ float2 LongLatToUV(float2 longlat)
+{
+    float2 output = make_float2(longlat.x / 2.0f / PI, longlat.y / PI);
+    if (output.y < 0.0f) {
+        output.y += 1.0f;
+        output.x += PI;
+    }
+    if (output.y > 1.0f) {
+        output.y -= 1.0f;
+        output.x += PI;
+    }
+    if (output.x < 0.0f)
+        output.x += 1.0f;
+    if (output.x > 1.0f)
+        output.x -= 1.0f;
+
+    return output;
 }
 inline __device__ float dot(float3 a, float3 b)
 {
