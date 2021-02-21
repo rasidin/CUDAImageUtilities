@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ----------------------------------------------------------------------
 @file CudaDeviceUtils.h
 @brief Utility for cuda computing
-@author minseob (leeminseob@outlook.com)
+@author minseob (https://github.com/rasidin)
 **********************************************************************/
 #ifndef CUDAIMAGEUTILITIES_CUDADEVICEUTILS_H_
 #define CUDAIMAGEUTILITIES_CUDADEVICEUTILS_H_

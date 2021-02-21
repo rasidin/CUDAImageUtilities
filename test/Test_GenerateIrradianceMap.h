@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ----------------------------------------------------------------------
 @file Test_GenerateIrradianceMap.h
 @brief Testing for generation irradiance
-@author minseob (leeminseob@outlook.com)
+@author minseob (https://github.com/rasidin)
 **********************************************************************/
 #ifndef CUDAIMAGEUTILITIES_TEST_GENERATEIRRADIANCEMAP_H_
 #define CUDAIMAGEUTILITIES_TEST_GENERATEIRRADIANCEMAP_H_

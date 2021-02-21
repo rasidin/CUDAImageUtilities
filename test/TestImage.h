@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ----------------------------------------------------------------------
 @file TestImage.h
 @brief Test image
-@author minseob (leeminseob@outlook.com)
+@author minseob (https://github.com/rasidin)
 **********************************************************************/
 #ifndef CUDAIMAGEUTILITIES_TESTIMAGE_H_
 #define CUDAIMAGEUTILITIES_TESTIMAGE_H_

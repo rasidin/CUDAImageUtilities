@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ----------------------------------------------------------------------
 @file test.cpp
 @brief test for CUDAImageUtilities
-@author minseob (leeminseob@outlook.com)
+@author minseob (https://github.com/rasidin)
 **********************************************************************/
 #include "TestImage.h"
 #include "Test_GenerateIrradianceMap.h"

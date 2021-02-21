@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ----------------------------------------------------------------------
 @file GenerateEnvironmentBRDFLUT.h
 @brief Generate Environment BRDF LUT
-@author minseob (leeminseob@outlook.com)
+@author minseob (https://github.com/rasidin)
 **********************************************************************/
 #include "GenerateEnvironmentBRDFLUT.h"
 #include "cuda_runtime.h"

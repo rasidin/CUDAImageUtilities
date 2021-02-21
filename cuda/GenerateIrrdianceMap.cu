@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ----------------------------------------------------------------------
 @file GenerateIrradianceMap.h
 @brief Generate irradiance map
-@author minseob (leeminseob@outlook.com)
+@author minseob (https://github.com/rasidin)
 **********************************************************************/
 #include "GenerateIrradianceMap.h"
 #include "cuda_runtime.h"

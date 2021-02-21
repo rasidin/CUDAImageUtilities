@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ----------------------------------------------------------------------
 @file GeneratePrefilteredReflectionMap.cu
 @brief Generate prefiltered reflection map
-@author minseob (leeminseob@outlook.com)
+@author minseob (https://github.com/rasidin)
 **********************************************************************/
 #include "GeneratePrefilteredReflectionMap.h"
 #include "cuda_runtime.h"

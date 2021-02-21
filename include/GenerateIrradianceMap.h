@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ----------------------------------------------------------------------
 @file GenerateIrradianceMap.h
 @brief Generate irradiance map (lambertian reflection)
-@author minseob (leeminseob@outlook.com)
+@author minseob (https://github.com/rasidin)
 **********************************************************************/
 #ifndef CUDAIMAGEUTILITIES_GENERATEIRRADIANCEMAP_H_
 #define CUDAIMAGEUTILITIES_GENERATEIRRADIANCEMAP_H_
