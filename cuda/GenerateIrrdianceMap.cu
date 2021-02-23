@@ -57,7 +57,7 @@ __global__ void ComputeIrradiance(float *Out, int InWidth, int InHeight, int Out
     float4 totallight = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
     for (int sampleidx = 0; sampleidx < SampleNum; sampleidx++) {
         float2 xi = Hammersley(sampleidx, SampleNum);
-        xi.x = xi.x + (float)texx / Width * 2.0f * PI;
+        xi.x = xi.x + (float)texx / InWidth * 2.0f * PI;
         float3 dir = GenerateDirectionInTangentSpace(xi, normal);
         float2 diruv = LongLatToUV(DirectionToLongLat(dir));
 
