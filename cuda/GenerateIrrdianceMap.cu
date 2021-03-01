@@ -18,8 +18,8 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ----------------------------------------------------------------------
-@file GenerateIrradianceMap.h
-@brief Generate irradiance map
+@file GenerateIrradianceMap.cu
+@brief Generate irradiance map (Cuda codes)
 @author minseob (https://github.com/rasidin)
 **********************************************************************/
 #include "GenerateIrradianceMap.h"
